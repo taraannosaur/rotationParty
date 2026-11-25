@@ -1,26 +1,30 @@
-let x;
-let y;
+let me;
+let guests;
+let colours = ["#e63946", "#2a9d8f", "#e9c46a", "#264653"];
 let maxSpeed = 15;
 
-function setup() { 
-  createCanvas(windowWidth, windowHeight);
-  x = width / 2;
-  y = height / 2;
-} 
-
-function draw() { 
-  x += map(rotationY, -180, 180, -maxSpeed, maxSpeed);
-  y += map(rotationX, -180, 180, -maxSpeed, maxSpeed);
-  
-  background(220);
-  ellipse(x, y, 50, 50);
+function preload() {
+  partyConnect("wss://demoserver.p5party.org", "tara", "tararoom1");
+  me = partyLoadMyShared({ x: 200, y: 200, colour: random(colours) });
+  guests = partyLoadGuestShareds();
 }
 
-/* resizes the canvas if the phone gets flipped so that
- * the browser orientation changes from landscape to
- * portrait or vice-versa. a must-have for games with tilt or
- * rotation controls!
- */
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
+function setup() {
+  createCanvas(400, 400);
+  noStroke();
+}
+
+function draw() {
+  background(220);
+
+  me.x += map(me.rotationX, -180, 180, -maxSpeed, maxSpeed);
+  me.y += map(me.rotationY, -180, 180, -maxSpeed, maxSpeed);
+
+  for (let i = 0; i < guests.length; i++) {
+    let g = guests[i];
+    if (g.x !== undefined && g.colour !== undefined) {
+      fill(g.colour);
+      ellipse(g.x, g.y, 40, 40);
+    }
+  }
 }
